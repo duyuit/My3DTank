@@ -4,29 +4,35 @@ using UnityEngine;
 
 public class AIShooting : MonoBehaviour
 {
-    public int m_PlayerNumber = 1;
-    public Rigidbody m_Shell;
     public Transform m_FireTransform;
     public AudioSource m_ShootingAudio;
-    public float m_MaxChargeTime = 0.75f;
     public AIRotate rotator;
-    public Transform player;
-    float lastUpdate = 0;
+
+    Transform player;
+    Vector3 directionBullet;
+    float lastFireTime = 0;
+    float lastRayCast = 0;
+    bool isRayhitPlayer = false;
+    private TankManagerment tankManagerment;
+
     void Start()
     {
+        tankManagerment = GetComponent<TankManagerment>();
+        m_ShootingAudio.clip = tankManagerment.currentBullet.soundFire;
     }
-    float CalculateForce()
+    void CheckRecoil(ref Vector3 direction)
     {
-        var distanceBetween = Vector3.Distance(player.position, transform.position) * 2;
-        //Debug.Log(distanceBetween);
-        return Mathf.Clamp(distanceBetween, 6, 28);
+        float recoilMagnitude = tankManagerment.currentBullet.recoil;
+        direction.x = direction.x + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+        direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
     }
     void GenerateShell()
     {
-        rotator.CheckAndRotate();
-        Rigidbody shell = Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation);
-        Vector3 velo = m_FireTransform.forward * CalculateForce();
-        shell.velocity = new Vector3(velo.x, 0, velo.z);
+        Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
+
+        CheckRecoil(ref directionBullet);
+        Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
+        shell.velocity = velo;
 
     }
     bool CheckRayCastToPlayer()
@@ -34,20 +40,31 @@ public class AIShooting : MonoBehaviour
         if (Vector3.Distance(transform.position, player.transform.position) > 30)
             return false;
 
-        Vector3 foward = m_FireTransform.forward;
-        foward.y = -0.05f;
-        Ray ray = new Ray(m_FireTransform.position, foward);
-        Debug.DrawRay(ray.origin, ray.direction * 50, Color.red);
-        RaycastHit raycastHit;
+        Vector3 targetPosition = player.position;
+        targetPosition.y = 0.5f; //Center tank by Y-axis.
 
-        if (Physics.Raycast(ray, out raycastHit))
+        Vector3 rayDelta = (targetPosition - m_FireTransform.position).normalized;
+
+        if (Time.time - lastRayCast > 0.4f)
         {
-            if (raycastHit.collider.transform == player || raycastHit.collider.name =="Shield")
+            Ray ray = new Ray(m_FireTransform.position, rayDelta * 30);
+            RaycastHit raycastHit;
+            lastRayCast = Time.time;
+
+            if (Physics.Raycast(ray, out raycastHit))
             {
-                return true;
+                if (raycastHit.collider.transform == player || raycastHit.collider.name == "Shield")
+                {
+                    isRayhitPlayer = true;
+                    directionBullet = rayDelta;
+                }
+                else
+                {
+                    isRayhitPlayer = false;
+                }
             }
         }
-        return false;
+        return isRayhitPlayer;
     }
     void FixedUpdate()
     {
@@ -55,24 +72,33 @@ public class AIShooting : MonoBehaviour
         {
             player = GameObject.Find("Player").transform;
         }
-       else
+        else
         {
             if (CheckRayCastToPlayer())
             {
-                if (Time.time - lastUpdate > m_MaxChargeTime)
+                if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
                 {
                     GenerateShell();
-                    lastUpdate = Time.time;
-                    HandleMusic();
+                    lastFireTime = Time.time;
+                    HandleMusic(true);
                 }
+            }
+            else
+            {
+                HandleMusic(false);
             }
         }
     }
-    void HandleMusic()
+    void HandleMusic(bool isPlay)
     {
-        if (!m_ShootingAudio.isPlaying)
+        if (isPlay)
         {
-            m_ShootingAudio.Play();
+            if (!m_ShootingAudio.isPlaying)
+                m_ShootingAudio.Play();
+        }
+        else
+        {
+            m_ShootingAudio.Stop();
         }
     }
  

@@ -6,22 +6,27 @@ using UnityEngine.UI;
 
 public class TankShooting : MonoBehaviour
 {
-    public int m_PlayerNumber = 1;
-    public Rigidbody m_Shell;
     public Transform m_FireTransform;
-    public Slider m_AimSlider;
     public AudioSource m_ShootingAudio;
-    public float m_MaxChargeTime = 0.75f;
     public Rotator rotator;
 
+    Vector3 directionBullet;
     private TankManagerment tankManagerment;
-    float lastUpdate = 0;
+    float lastFireTime = 0;
 
     void Start()
     {
         tankManagerment = GetComponent<TankManagerment>();
+        m_ShootingAudio.clip = tankManagerment.currentBullet.soundFire;
     }
-    Vector3 CalculateForce()
+
+    void CheckRecoil(ref Vector3 direction)
+    {
+        float recoilMagnitude = tankManagerment.currentBullet.recoil;
+        direction.x = direction.x + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+        direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+    }
+    void CheckRayCastToMouse()
     {
         //var dist = Vector3.Distance(Camera.main.transform.position, transform.position);
         //var v3Pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
@@ -34,34 +39,31 @@ public class TankShooting : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit))
         {
-            //Debug.DrawLine(m_FireTransform.position, hit.point);
-            Vector3 recoilDelta = (hit.point - m_FireTransform.position).normalized;
-            recoilDelta.x = recoilDelta.x + Random.Range(-1, 1) * 0.1f;
-            recoilDelta.z = recoilDelta.z + Random.Range(-1, 1) * 0.1f;
-            return recoilDelta;
+            hit.point.Set(hit.point.x, 0.5f, hit.point.z);
+            directionBullet = (hit.point - m_FireTransform.position).normalized;
         }
-        return Vector3.up;
-
-
     }
     void GenerateShell()
     {
         rotator.CheckAndRotate();
         Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
-        Vector3 velo = tankManagerment.currentBullet.force * CalculateForce();
+
+        CheckRecoil(ref directionBullet);
+        Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
         shell.velocity = velo;
     }
     void FixedUpdate()
     {
         if (Input.GetMouseButton(0))
         {
-            if (Time.time - lastUpdate > tankManagerment.currentBullet.timeReload)
+            if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
             {
                 //Vector2 mousePosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
                 //if (mousePosition.x < 0.3f && mousePosition.y < 0.5f) //Check mouse on Joystick
                 //    return;
+                CheckRayCastToMouse();
                 GenerateShell();
-                lastUpdate = Time.time;
+                lastFireTime = Time.time;
                 HandleMusic(true);
             }
         }else
@@ -69,17 +71,13 @@ public class TankShooting : MonoBehaviour
             HandleMusic(false);
         }
      }
-    void HandleMusic(bool isFiring)
+    void HandleMusic(bool isPlay)
     {
-        if (isFiring)
+    
+        if (isPlay)
         {
             if (!m_ShootingAudio.isPlaying)
-            {
                 m_ShootingAudio.Play();
-            }else
-            {
-                //m_ShootingAudio.pitch = Random.Range(1.5f, 1.8f); ;
-            }
         }
         else
         {

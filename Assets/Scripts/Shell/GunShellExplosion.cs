@@ -6,9 +6,7 @@ public class GunShellExplosion : MonoBehaviour
 {
     public ParticleSystem m_ExplosionParticles;
     public AudioSource m_ExplosionAudio;
-    public float m_MaxDamage = 100f;
     public float m_MaxLifeTime = 2f;
-    public float m_ExplosionRadius = 5f;
 
 
     private void Start()
@@ -28,7 +26,7 @@ public class GunShellExplosion : MonoBehaviour
 
                 if (targetTankHeal)
                 {
-                    targetTankHeal.TakeDamage(1);
+                    targetTankHeal.TakeDamage(1.5f);
                 }
             }
         }

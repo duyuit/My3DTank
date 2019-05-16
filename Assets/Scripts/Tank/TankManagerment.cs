@@ -3,44 +3,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class BulletInfomation
-{
-    public GameObject prefab;
-    public BulletType type;
-    public float timeReload;
-    public float force;
-}
-public enum BulletType
-{
-    TankShell = 0,
-    MachineGunBullet = 1,
-}
+
+
 public class TankManagerment : MonoBehaviour
 {
-    public List<BulletInfomation> listBullet;
-    public BulletInfomation currentBullet;
-
+    public BulletInfomation bulletInfomation;
+    [HideInInspector]
+    public BulletInfo currentBullet;
+    public AudioSource fireAudioSource;
     // Start is called before the first frame update
     void Start()
     {
-        currentBullet = listBullet[1];
+        BulletSelect(1);
+        //currentBullet = bulletInfomation.listBullet[0];
     }
 
     // Update is called once per frame
     void Update()
     {
-
+       
     }
-  
+    void UpdateAudioClip()
+    {
+        fireAudioSource.clip = currentBullet.soundFire;
+
+        switch (currentBullet.type)
+        {
+            case BulletType.MachineGunBullet:
+                fireAudioSource.volume = 0.2f;
+                fireAudioSource.pitch = 0.6f;
+                fireAudioSource.loop = true;
+                break;
+            case BulletType.TankShell:
+                fireAudioSource.volume = 1f;
+                fireAudioSource.pitch = 1f;
+                fireAudioSource.loop = false;
+                break;
+        }
+    }
     public void BulletSelect(int typeID)
     {
-       
-        foreach(var bullet in listBullet)
+
+        foreach (var bullet in bulletInfomation.listBullet)
         {
-            if (bullet.type == (BulletType) typeID)
+            if (bullet.type == (BulletType)typeID)
             {
                 currentBullet = bullet;
+                UpdateAudioClip();
                 return;
             }
         }

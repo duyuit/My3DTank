@@ -17,8 +17,8 @@ public class Rotator : MonoBehaviour
         Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
         //Get the angle between the points
-        if (mouseOnScreen.x < 0.3f && mouseOnScreen.y < 0.5f)
-            return;
+        //if (mouseOnScreen.x < 0.3f && mouseOnScreen.y < 0.5f)
+        //    return;
 
         float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
 

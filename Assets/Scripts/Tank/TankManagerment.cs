@@ -11,6 +11,7 @@ public class TankManagerment : MonoBehaviour
     [HideInInspector]
     public BulletInfo currentBullet;
     public AudioSource fireAudioSource;
+    public GameObject flameGun;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,11 +35,16 @@ public class TankManagerment : MonoBehaviour
                 fireAudioSource.pitch = 0.6f;
                 fireAudioSource.loop = true;
                 break;
+
             case BulletType.TankShell:
+            case BulletType.ElectricBullet:
+            case BulletType.FlameGun:
                 fireAudioSource.volume = 1f;
                 fireAudioSource.pitch = 1f;
                 fireAudioSource.loop = false;
                 break;
+            
+               
         }
     }
     public void BulletSelect(int typeID)
@@ -50,6 +56,13 @@ public class TankManagerment : MonoBehaviour
             {
                 currentBullet = bullet;
                 UpdateAudioClip();
+                if(currentBullet.type == BulletType.FlameGun)
+                {
+                    flameGun.SetActive(true);
+                }else
+                {
+                    flameGun.SetActive(false);
+                }
                 return;
             }
         }

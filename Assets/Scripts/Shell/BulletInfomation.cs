@@ -7,6 +7,8 @@ public enum BulletType
 {
     TankShell = 0,
     MachineGunBullet = 1,
+    ElectricBullet = 2,
+    FlameGun =3,
 }
 [Serializable]
 public class BulletInfo

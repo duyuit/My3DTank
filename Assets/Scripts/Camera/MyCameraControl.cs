@@ -21,7 +21,7 @@ public class MyCameraControl : MonoBehaviour
         transform.position = player.transform.position + distance;
         if (Input.GetAxis("Mouse ScrollWheel") != 0f) // forward
         {
-            camera.orthographicSize = Mathf.Clamp(camera.orthographicSize - Input.GetAxis("Mouse ScrollWheel") * 5, 4.7f, 10f);
+            camera.orthographicSize = Mathf.Clamp(camera.orthographicSize - Input.GetAxis("Mouse ScrollWheel") * 5, 4.7f, 13.27f);
         }
         //transform.rotation = Quaternion.Euler()
     }

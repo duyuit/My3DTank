@@ -13,6 +13,7 @@ public class TankShooting : MonoBehaviour
     Vector3 directionBullet;
     private TankManagerment tankManagerment;
     float lastFireTime = 0;
+    private Vector3 mouseHitPosition;
 
     void Start()
     {
@@ -40,6 +41,7 @@ public class TankShooting : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             hit.point.Set(hit.point.x, 0.5f, hit.point.z);
+            mouseHitPosition = hit.point;
             directionBullet = (hit.point - m_FireTransform.position).normalized;
         }
     }
@@ -48,9 +50,16 @@ public class TankShooting : MonoBehaviour
         rotator.CheckAndRotate();
         Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
 
-        CheckRecoil(ref directionBullet);
-        Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
-        shell.velocity = velo;
+        if(tankManagerment.currentBullet.type != BulletType.ElectricBullet)
+        {
+            CheckRecoil(ref directionBullet);
+            Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
+            shell.velocity = velo;
+        }else
+        {
+            shell.GetComponent<FireToATarget>().Fire(mouseHitPosition);
+        }
+   
     }
     void FixedUpdate()
     {
@@ -61,9 +70,17 @@ public class TankShooting : MonoBehaviour
                 //Vector2 mousePosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
                 //if (mousePosition.x < 0.3f && mousePosition.y < 0.5f) //Check mouse on Joystick
                 //    return;
-                CheckRayCastToMouse();
-                GenerateShell();
-                lastFireTime = Time.time;
+                if(tankManagerment.currentBullet.type == BulletType.FlameGun)
+                {
+
+                }
+                else
+                {
+                    CheckRayCastToMouse();
+                    GenerateShell();
+                    lastFireTime = Time.time;
+                }
+               
                 HandleMusic(true);
             }
         }else

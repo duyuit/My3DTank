@@ -14,8 +14,8 @@ public class CustomCursor : MonoBehaviour
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-        
-       // Cursor.visible = false;
+        //rectTransform.SetSiblingIndex(5);
+        Cursor.visible = false;
     }
 
     // Update is called once per frame

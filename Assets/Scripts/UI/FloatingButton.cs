@@ -16,7 +16,7 @@ public class FloatingButton : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         currentImage = GetComponent<Image>();
-        rectTransform.SetSiblingIndex(10);
+        rectTransform.SetSiblingIndex(5);
         foreach (var button in listButton)
         {
             button.GetComponent<RectTransform>().SetSiblingIndex(0);

@@ -22,9 +22,9 @@ public class AIShooting : MonoBehaviour
     }
     void CheckRecoil(ref Vector3 direction)
     {
-        float recoilMagnitude = tankManagerment.currentBullet.recoil;
-        direction.x = direction.x + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
-        direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+        //float recoilMagnitude = tankManagerment.currentBullet.recoil;
+        //direction.x = direction.x + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+        //direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
     }
     void GenerateShell()
     {

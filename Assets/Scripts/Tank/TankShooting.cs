@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class TankShooting : MonoBehaviour
 {
     public Transform m_FireTransform;
-    public AudioSource m_ShootingAudio;
     public Rotator rotator;
 
     Vector3 directionBullet;
@@ -18,14 +17,13 @@ public class TankShooting : MonoBehaviour
     void Start()
     {
         tankManagerment = GetComponent<TankManagerment>();
-        m_ShootingAudio.clip = tankManagerment.currentBullet.soundFire;
     }
 
     void CheckRecoil(ref Vector3 direction)
     {
-        float recoilMagnitude = tankManagerment.currentBullet.recoil;
-        direction.x = direction.x + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
-        direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+        //float recoilMagnitude = tankManagerment.currentBullet.recoil;
+        //direction.x = direction.x + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+        //direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
     }
     void CheckRayCastToMouse()
     {
@@ -76,31 +74,17 @@ public class TankShooting : MonoBehaviour
                 }
                 else
                 {
-                    CheckRayCastToMouse();
-                    GenerateShell();
+                    //tankManagerment.currentBulletShootControl.Fire()
                     lastFireTime = Time.time;
                 }
                
-                HandleMusic(true);
+                tankManagerment.HandleMusic(true);
             }
         }else
         {
-            HandleMusic(false);
+            tankManagerment.HandleMusic(false);
         }
      }
-    void HandleMusic(bool isPlay)
-    {
-    
-        if (isPlay)
-        {
-            if (!m_ShootingAudio.isPlaying)
-                m_ShootingAudio.Play();
-        }
-        else
-        {
-            m_ShootingAudio.Stop();
-        }
-    }
     private void Update()
     {
         // Track the current state of the fire button and make decisions based on the current launch force.

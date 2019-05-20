@@ -17,7 +17,6 @@ public class BulletInfo
     public BulletType type;
     public float timeReload;
     public float velocity;
-    public float recoil;
     public AudioClip soundFire;
 }
 

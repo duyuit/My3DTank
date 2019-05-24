@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class FPSShow : MonoBehaviour
 {
     Text text;
+    float lastUpdate = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,7 +17,12 @@ public class FPSShow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        int fps =(int)( 1 / Time.deltaTime);
-        text.text = fps.ToString();
+        if(Time.time - lastUpdate >1)
+        {
+            int fps = (int)(1 / Time.deltaTime);
+            text.text = fps.ToString();
+            lastUpdate = Time.time;
+        }
+
     }
 }

@@ -76,33 +76,48 @@ public class TankManagerment : MonoBehaviour
             fireAudioSource.Stop();
         }
     }
+    public void UltimateButtonToggle()
+    {
+        var ultimateComponent = GetComponent<UltimateShootControl>();
+        ultimateComponent.enabled = !ultimateComponent.enabled;
+        TurnUltimate(ultimateComponent.enabled);
+    }
+    void TurnUltimate(bool isTurn)
+    {
+        GetComponent<UltimateShootControl>().enabled = isTurn;
+        if (isTurn)
+        {
+            GetComponent<MachinaGunShootControl>().enabled = false;
+            GetComponent<TankShellShootControl>().enabled = false;
+            GetComponent<FlameGunShootControl>().enabled = false;
+            GetComponent<ElectricShellShootControl>().enabled = false;
+        }
+        else
+        {
+            ActiveComponent(currentBullet.type);
+        }
+    }
     void ActiveComponent(BulletType type)
     {
+        GetComponent<MachinaGunShootControl>().enabled = false;
+        GetComponent<TankShellShootControl>().enabled = false;
+        GetComponent<FlameGunShootControl>().enabled = false;
+        GetComponent<ElectricShellShootControl>().enabled = false;
+
         switch (type)
         {
             case BulletType.ElectricBullet:
-                GetComponent<MachinaGunShootControl>().enabled = false;
                 GetComponent<ElectricShellShootControl>().enabled = true;
-                GetComponent<TankShellShootControl>().enabled = false;
-                GetComponent<FlameGunShootControl>().enabled = false;
                 break;
             case BulletType.FlameGun:
-                GetComponent<MachinaGunShootControl>().enabled = false;
-                GetComponent<ElectricShellShootControl>().enabled = false;
-                GetComponent<TankShellShootControl>().enabled = false;
                 GetComponent<FlameGunShootControl>().enabled = true;
                 break;
             case BulletType.MachineGunBullet:
                 GetComponent<MachinaGunShootControl>().enabled = true;
-                GetComponent<ElectricShellShootControl>().enabled = false;
-                GetComponent<TankShellShootControl>().enabled = false;
-                GetComponent<FlameGunShootControl>().enabled = false;
+           
                 break;
             case BulletType.TankShell:
-                GetComponent<MachinaGunShootControl>().enabled = false;
-                GetComponent<ElectricShellShootControl>().enabled = false;
                 GetComponent<TankShellShootControl>().enabled = true;
-                GetComponent<FlameGunShootControl>().enabled = false;
                 break;
         }
     }

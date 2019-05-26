@@ -32,7 +32,7 @@ public class FlameGunShootControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Input.GetMouseButton(0))
+        if (tankManagerment.canFire)
         {
             animator.SetBool("FTOn", true);
             damageBox.SetActive(true);

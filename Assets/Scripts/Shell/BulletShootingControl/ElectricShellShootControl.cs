@@ -18,7 +18,7 @@ public class ElectricShellShootControl : MonoBehaviour
 
     void CheckRayCastToMouse()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(tankManagerment.firePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit))
@@ -35,14 +35,17 @@ public class ElectricShellShootControl : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (Input.GetMouseButton(0))
+        if (tankManagerment.canFire)
         {
             if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
             {
                 Fire();
                 lastFireTime = Time.time;
                 tankManagerment.HandleMusic(true);
-            }
+            } else
+        {
+            tankManagerment.HandleMusic(false);
+        }
         }
         else
         {

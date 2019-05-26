@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
+using UnityEngine.EventSystems;
 
 public class TankManagerment : MonoBehaviour
 {
@@ -12,6 +12,8 @@ public class TankManagerment : MonoBehaviour
     public BulletInfo currentBullet;
     public AudioSource fireAudioSource;
     public Transform m_FireTransform;
+    public bool canFire;
+    public Vector2 firePosition;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,10 +23,37 @@ public class TankManagerment : MonoBehaviour
         //currentBullet = bulletInfomation.listBullet[0];
     }
 
+    private bool IsPointerOverUIObject(Vector2 mousePosition)
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        if (results.Count > 0 && results[0].gameObject.layer != 5)
+            return false;
+
+        return results.Count > 0;
+    }
     // Update is called once per frame
     void Update()
     {
-       
+        if (Input.touchCount < 1)
+            canFire = false;
+        foreach (var touch in Input.touches)
+        {
+            Vector2 mousePos = new Vector2(touch.position.x, touch.position.y);
+            if (!IsPointerOverUIObject(mousePos))
+            {
+                GameGlobal.Instance.lastFirePosition = mousePos;
+                canFire = true;
+                firePosition = mousePos;
+                return;
+            }
+            else
+            {
+                canFire = false;
+            }
+        }
     }
     void UpdateAudioClip()
     {

@@ -34,7 +34,7 @@ public class TankShellShootControl : MonoBehaviour
 
     void CheckRayCastToMouse()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(tankManagerment.firePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit))
@@ -52,7 +52,7 @@ public class TankShellShootControl : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (Input.GetMouseButton(0))
+        if (tankManagerment.canFire)
         {
             if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -40,7 +41,8 @@ public class MachinaGunShootControl : MonoBehaviour
     void CheckRayCastToMouse()
     {
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Ray ray = Camera.main.ScreenPointToRay(tankManagerment.firePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit))
@@ -49,6 +51,7 @@ public class MachinaGunShootControl : MonoBehaviour
             directionBullet = (hit.point - m_FireTransform.position).normalized;
         }
     }
+   
     void GenerateShell()
     {
         Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
@@ -57,41 +60,55 @@ public class MachinaGunShootControl : MonoBehaviour
         shell.velocity = velo;
      
     }
-    private bool isMouseOnGui(int id)
-    {
-        return EventSystem.current.IsPointerOverGameObject(id);
-    }
+
     void FixedUpdate()
     {
-        if (Input.touchCount > 0)
+        if(tankManagerment.canFire)
         {
-            foreach (var touch in Input.touches)
+            if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
             {
-                if(!isMouseOnGui(touch.fingerId))
-                {
-                    Fire();
-                    lastFireTime = Time.time;
-
-                }
+                Fire();
+                lastFireTime = Time.time;
+                tankManagerment.HandleMusic(true);
+            }
+            else
+            {
+                tankManagerment.HandleMusic(false);
+                fireEffect.SetActive(false);
             }
         }
-
-
+        else
+        {
+            tankManagerment.HandleMusic(false);
+            fireEffect.SetActive(false);
+        }
+    }
+             
         //if (Input.GetMouseButton(0))
         //{
-        //    if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
+        //    Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        //    if(!IsPointerOverUIObject(mousePos))
         //    {
-        //        Fire();
-        //        lastFireTime = Time.time;
-        //        tankManagerment.HandleMusic(true);
+        //        if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
+        //        {
+                    
+        //            Fire(mousePos);
+        //            lastFireTime = Time.time;
+        //            tankManagerment.HandleMusic(true);
+        //        }
         //    }
+        //    else
+        //    {
+        //        tankManagerment.HandleMusic(false);
+        //        fireEffect.SetActive(false);
+        //    }
+        
         //}
         //else
         //{
         //    tankManagerment.HandleMusic(false);
         //    fireEffect.SetActive(false);
         //}
-    }
 
     private void Fire()
     {

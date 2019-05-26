@@ -13,9 +13,14 @@ public class UltimateShootControl : MonoBehaviour
         {
             particle.Stop();
         }
+        StartCoroutine(wait(1f));
+       
+    }
+    IEnumerator wait(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
         laserBeam.SetActive(false);
     }
-
     void OnEnable()
     {
         camera.GetComponent<CameraShake>().enabled = true;

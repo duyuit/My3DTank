@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MachinaGunShootControl : MonoBehaviour
 {
@@ -56,22 +57,40 @@ public class MachinaGunShootControl : MonoBehaviour
         shell.velocity = velo;
      
     }
+    private bool isMouseOnGui(int id)
+    {
+        return EventSystem.current.IsPointerOverGameObject(id);
+    }
     void FixedUpdate()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.touchCount > 0)
         {
-            if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
+            foreach (var touch in Input.touches)
             {
-                Fire();
-                lastFireTime = Time.time;
-                tankManagerment.HandleMusic(true);
+                if(!isMouseOnGui(touch.fingerId))
+                {
+                    Fire();
+                    lastFireTime = Time.time;
+
+                }
             }
         }
-        else
-        {
-            tankManagerment.HandleMusic(false);
-            fireEffect.SetActive(false);
-        }
+
+
+        //if (Input.GetMouseButton(0))
+        //{
+        //    if (Time.time - lastFireTime > tankManagerment.currentBullet.timeReload)
+        //    {
+        //        Fire();
+        //        lastFireTime = Time.time;
+        //        tankManagerment.HandleMusic(true);
+        //    }
+        //}
+        //else
+        //{
+        //    tankManagerment.HandleMusic(false);
+        //    fireEffect.SetActive(false);
+        //}
     }
 
     private void Fire()

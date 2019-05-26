@@ -8,6 +8,7 @@ public class LandMineControl : MonoBehaviour
     bool isActive = false;
     float countActive = 0;
     public ParticleSystem explosionPS;
+    public LayerMask m_TankMask;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +20,7 @@ public class LandMineControl : MonoBehaviour
     {
         if(!isActive)
         {
-            if (Time.time - countActive > 1)
+            if (Time.time - countActive > 0.5f)
             {
                 isActive = true;
             }
@@ -32,26 +33,24 @@ public class LandMineControl : MonoBehaviour
      //Use the same vars you use to draw your Overlap SPhere to draw your Wire Sphere.
         Gizmos.DrawWireSphere(transform.position, 2.4f);
     }
+    void OnCollisionStay(Collision other)
+    {
+        OnCollisionEnter(other);
+    }
     void OnCollisionEnter(Collision other)
     {
         if (isActive)
         {
             if(other.gameObject.tag.Equals("Tank"))
             {
-                //Collider[] listCollider = Physics.OverlapSphere(transform.position, m_ExplosionRadius, m_TankMask);
-                //for (int i = 0; i < listCollider.Length; i++)
-                //{
-                //    Rigidbody targetRigidbody = listCollider[i].GetComponent<Rigidbody>();
-                //    if (!targetRigidbody)
-                //        continue;
-                //    targetRigidbody.AddExplosionForce(m_ExplosionForce, transform.position, m_ExplosionRadius);
-                //    TankHealth targetTankHeal = targetRigidbody.GetComponent<TankHealth>();
-                //    if (!targetTankHeal)
-                //        continue;
-                //    targetTankHeal.TakeDamage(CalculateDamage(targetRigidbody.position));
-                //}
-
-
+                Collider[] listCollider = Physics.OverlapSphere(transform.position, 2.4f, m_TankMask);
+                for (int i = 0; i < listCollider.Length; i++)
+                {
+                    TankHealth targetTankHeal = listCollider[i].GetComponent<TankHealth>();
+                    if (!targetTankHeal)
+                        continue;
+                    targetTankHeal.TakeDamage(25f);
+                }
 
                 explosionPS.transform.parent = null;
                 explosionPS.Play();

@@ -12,21 +12,30 @@ public class DropLandMine : MonoBehaviour
     {
         
     }
-
-    // Update is called once per frame
-    void Update()
+    public void Drop()
     {
-        if(Input.GetKey(KeyCode.Space) && Time.time - lastDrop > 1)
+        if(Time.time - lastDrop > 1)
         {
             Vector3 position = transform.position - transform.forward * 2;
             position.y = 1;
             GameObject mine = Instantiate(landMinePrefab, position, Quaternion.identity);
-            Vector3 temp = -transform.forward * 2;
+            Vector3 temp = -transform.forward * 2; ;
+            if(Input.GetAxis("Vertical1") < 0)
+            {
+                temp = -transform.forward *15;
+            }
             temp.y = 5;
             mine.GetComponent<Rigidbody>().velocity = temp;
-           
+
             lastDrop = Time.time;
-            Debug.Log(transform.forward);
+        }
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetKey(KeyCode.Space))
+        {
+            Drop();
         }
     }
 }

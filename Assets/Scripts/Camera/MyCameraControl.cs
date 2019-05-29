@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ public class MyCameraControl : MonoBehaviour
 {
 
     Camera camera;
-    public GameObject player;
+    public Transform player;
     Vector3 distance;
     CameraShake cameraShake;
     // Start is called before the first frame update
@@ -14,14 +15,19 @@ public class MyCameraControl : MonoBehaviour
     {
         camera = GetComponent<Camera>();
         cameraShake = GetComponent<CameraShake>();
-        distance = transform.position - player.transform.position ;
+       // distance = transform.position - player.transform.position ;
     }
-
+    public void SetPlayer(Transform newplayer)
+    {
+        player = newplayer;
+        distance = transform.position - player.position;
+    }
     // Update is called once per frame
     void Update()
     {
+        if(player!=null)  
+            transform.position = player.transform.position + distance;
       
-        transform.position = player.transform.position + distance;
         if (cameraShake.enabled)
             cameraShake.Shake();
         if (Input.GetAxis("Mouse ScrollWheel") != 0f) // forward

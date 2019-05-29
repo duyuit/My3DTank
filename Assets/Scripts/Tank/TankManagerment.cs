@@ -12,6 +12,7 @@ public class TankManagerment : MonoBehaviour
     public BulletInfo currentBullet;
     public AudioSource fireAudioSource;
     public Transform m_FireTransform;
+    public GameObject m_Turret;
     public bool canFire;
     public Vector2 firePosition;
     // Start is called before the first frame update
@@ -37,6 +38,7 @@ public class TankManagerment : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+ #if UNITY_ANDROID
         if (Input.touchCount < 1)
             canFire = false;
         foreach (var touch in Input.touches)
@@ -54,6 +56,18 @@ public class TankManagerment : MonoBehaviour
                 canFire = false;
             }
         }
+#endif
+
+
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+        if (Input.GetMouseButton(0))
+        {
+            canFire = true;
+            firePosition = Input.mousePosition;
+            GameGlobal.Instance.lastFirePosition = Input.mousePosition;
+        }
+#endif
+
     }
     void UpdateAudioClip()
     {

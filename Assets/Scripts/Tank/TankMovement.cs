@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-
-public class TankMovement : MonoBehaviour
+using UnityEngine.Networking;
+public class TankMovement : NetworkBehaviour
 {
     public int m_PlayerNumber = 1;
     public float m_Speed = 12f;
@@ -10,7 +10,6 @@ public class TankMovement : MonoBehaviour
     public AudioClip m_EngineDriving;
     public float m_PitchRange = 0.2f;
     public FixedJoystick joystick;
-    public GameObject m_Turret;
 
     private string m_MovementAxisName;
     private string m_TurnAxisName;
@@ -52,10 +51,20 @@ public class TankMovement : MonoBehaviour
 
     private void Update()
     {
-        m_MovementInputValue = Input.GetAxis(m_MovementAxisName);
+        if(isLocalPlayer)
+        {
+            m_MovementInputValue = Input.GetAxis(m_MovementAxisName);
+            m_TurnInputValue = Input.GetAxis(m_TurnAxisName);
+#if UNITY_ANDROID
+        if(joystick != null)
         m_TurnInputValue = Input.GetAxis(m_TurnAxisName) + joystick.Horizontal;
-        EngineAudio();
-        // Store the player's input and make sure the audio for the engine is playing.
+#endif
+            EngineAudio();
+            // Store the player's input and make sure the audio for the engine is playing.
+            Move();
+            Turn();
+        }
+
     }
 
 
@@ -85,32 +94,46 @@ public class TankMovement : MonoBehaviour
     private void FixedUpdate()
     {
         // Move and turn the tank.
-        Move();
-        Turn();
+        //if(isLocalPlayer)
+        //{
+        //    //Move();
+        //    //Turn();
+        //    Move();
+        //    CmdTurn();
+        //}
+        
+    
     }
-
+    public override void OnStartLocalPlayer()
+    {
+        Camera.main.GetComponent<MyCameraControl>().SetPlayer(gameObject.transform);
+    }
     private void Move()
     {
         // Adjust the position of the tank based on the player's input.
         Vector3 movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime;
         m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
+#if UNITY_ANDROID
+        if(joystick != null)
+        {
+            float horiJoyStick = joystick.Horizontal;
+            float vertiJoyStick = joystick.Vertical;
 
+            movement.Set(horiJoyStick, 0, vertiJoyStick);
+            movement.Normalize();
+            bool hasHorizontalInput = !Mathf.Approximately(horiJoyStick, 0f);
+            bool hasVerticalInput = !Mathf.Approximately(vertiJoyStick, 0f);
 
-        float horiJoyStick = joystick.Horizontal;
-        float vertiJoyStick = joystick.Vertical;
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, m_TurnSpeed * Time.deltaTime, 0f);
 
-        movement.Set(horiJoyStick, 0, vertiJoyStick);
-        movement.Normalize();
-        bool hasHorizontalInput = !Mathf.Approximately(horiJoyStick, 0f);
-        bool hasVerticalInput = !Mathf.Approximately(vertiJoyStick, 0f);
+            Quaternion m_Rotation = Quaternion.identity;
+            m_Rotation = Quaternion.LookRotation(desiredForward);
 
-        Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, m_TurnSpeed * Time.deltaTime, 0f);
-
-        Quaternion m_Rotation = Quaternion.identity;
-        m_Rotation = Quaternion.LookRotation(desiredForward);
-
-        m_Rigidbody.MovePosition(m_Rigidbody.position + movement*Time.deltaTime*m_Speed);
-        m_Rigidbody.MoveRotation(m_Rotation);
+            m_Rigidbody.MovePosition(m_Rigidbody.position + movement*Time.deltaTime*m_Speed);
+            m_Rigidbody.MoveRotation(m_Rotation);
+        }
+      
+#endif
     }
 
 
@@ -120,5 +143,17 @@ public class TankMovement : MonoBehaviour
         float turn = m_TurnInputValue * m_TurnSpeed * Time.deltaTime;
         Quaternion quaternion = Quaternion.Euler(0, turn, 0);
         m_Rigidbody.MoveRotation(m_Rigidbody.rotation * quaternion);
+    }
+
+    [Command]
+    void CmdMove()
+    {
+        Move();
+    }
+
+    [Command]
+    void CmdTurn()
+    {
+        Turn();
     }
 }

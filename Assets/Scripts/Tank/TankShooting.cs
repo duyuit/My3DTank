@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class TankShooting : MonoBehaviour
 {
     public Transform m_FireTransform;
-    public Rotator rotator;
+
 
     Vector3 directionBullet;
     private TankManagerment tankManagerment;
@@ -45,7 +45,6 @@ public class TankShooting : MonoBehaviour
     }
     void GenerateShell()
     {
-        rotator.CheckAndRotate();
         Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
 
         if(tankManagerment.currentBullet.type != BulletType.ElectricBullet)

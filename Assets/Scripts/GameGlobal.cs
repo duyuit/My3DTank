@@ -8,6 +8,7 @@ namespace Assets.Scripts
 {
     public class GameGlobal
     {
+        //public GameObject localPlayer;
         public Vector2 lastJoystickPosition;
         public Vector2 lastFirePosition;
         public GameObject joystickMoveByDrag;

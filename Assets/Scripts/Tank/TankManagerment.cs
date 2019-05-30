@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.EventSystems;
+using Random = UnityEngine.Random;
 
 public class TankManagerment : NetworkBehaviour
 {
@@ -75,6 +76,29 @@ public class TankManagerment : NetworkBehaviour
         else canFire = false;
 #endif
 
+    }
+    public void Reset()
+    {
+        if(isServer)
+        RpcReset();
+        else
+        {
+            CmdReset();
+        }
+    }
+    [Command]
+    void CmdReset()
+    {
+        RpcReset();
+    }
+    [ClientRpc]
+    void RpcReset()
+    {
+        canFire = false;
+        gameObject.SetActive(true);
+        gameObject.GetComponent<TankHealth>().SetHealthUI(100);
+        gameObject.GetComponent<TankHealth>().m_Dead = false;
+        transform.position = new Vector3(Random.Range(1, 40), 0, Random.Range(1, 40));
     }
     void UpdateAudioClip()
     {
@@ -170,6 +194,11 @@ public class TankManagerment : NetworkBehaviour
                 GetComponent<TankShellShootControl>().enabled = true;
                 break;
         }
+    }
+    public override void OnStartLocalPlayer()
+    {
+        Camera.main.GetComponent<MyCameraControl>().SetPlayer(gameObject.transform);
+
     }
 }
 

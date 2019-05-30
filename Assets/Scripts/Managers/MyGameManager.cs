@@ -12,7 +12,10 @@ public class MyGameManager : MonoBehaviour
     }
     public void Restart()
     {
-        SceneManager.LoadScene(0);
+        var player = GetComponent<MyCameraControl>().player;
+        player.GetComponent<TankManagerment>().Reset();
+
+        //SceneManager.LoadScene(0);
     }
 
     // Update is called once per frame

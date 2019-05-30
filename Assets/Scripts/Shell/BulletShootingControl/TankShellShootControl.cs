@@ -45,9 +45,9 @@ public class TankShellShootControl : NetworkBehaviour
         }
     }
     [Command]
-    void CmdGenerateShell(Vector3 direction)
+    void CmdGenerateShell(Vector3 direction,Vector3 position, Quaternion rotate)
     {
-        GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation);
+        GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, position, rotate);
         Vector3 velo = tankManagerment.currentBullet.velocity * direction;
         shell.GetComponent<Rigidbody>().velocity = velo;
         NetworkServer.Spawn(shell);
@@ -96,6 +96,6 @@ public class TankShellShootControl : NetworkBehaviour
             effect.Play();
         }
         CheckRayCastToMouse();
-        CmdGenerateShell(directionBullet);
+        CmdGenerateShell(directionBullet,m_FireTransform.position,m_FireTransform.rotation);
     }
 }

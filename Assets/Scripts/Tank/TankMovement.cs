@@ -104,10 +104,7 @@ public class TankMovement : NetworkBehaviour
         
     
     }
-    public override void OnStartLocalPlayer()
-    {
-        Camera.main.GetComponent<MyCameraControl>().SetPlayer(gameObject.transform);
-    }
+
     private void Move()
     {
         // Adjust the position of the tank based on the player's input.

@@ -30,9 +30,8 @@ public class CustomNetworkManager : NetworkManager
     void SetUpNewPlayer(NetworkConnection conn, short id)
     {
         GameObject player = Instantiate(playerPrefab);
-        player.transform.position = new Vector3(player.transform.position.x + conn.connectionId * 2, player.transform.position.y, player.transform.position.z);
+        player.transform.position =new Vector3(Random.Range(1,40), player.transform.position.y, Random.Range(1, 40));
         NetworkServer.AddPlayerForConnection(conn, player, id);
-
 
         //GameObject npc = Instantiate(spawnPrefabs[0]);
         //npc.transform.position = new Vector3(npc.transform.position.x + conn.connectionId * 2, npc.transform.position.y + 1, npc.transform.position.z);

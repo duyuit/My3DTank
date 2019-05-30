@@ -19,9 +19,11 @@ public class MyCameraControl : MonoBehaviour
     }
     public void SetPlayer(Transform newplayer)
     {
+        transform.position = new Vector3(newplayer.position.x, transform.position.y, newplayer.position.z - 10);
         player = newplayer;
         distance = transform.position - player.position;
     }
+ 
     // Update is called once per frame
     void Update()
     {

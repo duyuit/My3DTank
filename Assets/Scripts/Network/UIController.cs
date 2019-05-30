@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
@@ -13,8 +14,14 @@ public class UIController : MonoBehaviour
         networkDiscovery = CustomNetworkDiscovery.Instance;
         networkManager = CustomNetworkManager.Instance;
     }
+    public void ConfigAddress()
+    {
+        Text text = GameObject.Find("AddressText").GetComponent<Text>();
+        networkManager.networkAddress = text.text;
+    }
     public void StartHost()
     {
+        ConfigAddress();
         networkManager.StartHost();
         networkDiscovery.StartAsServer();
         DisableButton();
@@ -22,6 +29,7 @@ public class UIController : MonoBehaviour
     }
     public void StartClient()
     {
+        ConfigAddress();
         networkDiscovery.StartAsClient();
         DisableButton();
     }

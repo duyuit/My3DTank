@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 
-public class ShellExplosion : MonoBehaviour
+public class ShellExplosion : NetworkBehaviour
 {
     public LayerMask m_TankMask;
     public ParticleSystem m_ExplosionParticles;       
     public AudioSource m_ExplosionAudio;              
-    public float m_MaxDamage = 100f;                  
+    public float m_MaxDamage = 50f;                  
     public float m_ExplosionForce = 1000f;            
     public float m_MaxLifeTime = 2f;                  
     public float m_ExplosionRadius = 5f;              
@@ -16,12 +17,13 @@ public class ShellExplosion : MonoBehaviour
         Destroy(gameObject, m_MaxLifeTime);
     }
 
-
+    bool isExplosed = false;
     private void OnTriggerEnter(Collider other)
     {
-        // Find all the tanks in an area around the shell and damage them.
+        if (isExplosed)
+            return;
         Collider[] listCollider = Physics.OverlapSphere(transform.position, m_ExplosionRadius, m_TankMask);
-        for(int i=0;i<listCollider.Length;i++)
+        for (int i = 0; i < listCollider.Length; i++)
         {
             Rigidbody targetRigidbody = listCollider[i].GetComponent<Rigidbody>();
             if (!targetRigidbody)
@@ -32,14 +34,19 @@ public class ShellExplosion : MonoBehaviour
                 continue;
             targetTankHeal.TakeDamage(CalculateDamage(targetRigidbody.position));
         }
-
-        m_ExplosionParticles.transform.parent = null; 
+           
+        m_ExplosionParticles.transform.parent = null;
         m_ExplosionParticles.Play();
         m_ExplosionAudio.Play();
 
         Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
-        //GameObject.Find("Main Camera").GetComponent<ShockWave>().GenerateShockWave(transform.localPosition);
+        isExplosed = true;
         Destroy(gameObject,0.1f);
+
+        //GameObject.Find("Main Camera").GetComponent<ShockWave>().GenerateShockWave(transform.localPosition);
+
+        // Find all the tanks in an area around the shell and damage them.
+
     }
 
 

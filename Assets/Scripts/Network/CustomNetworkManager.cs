@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+
 public class CustomNetworkManager : NetworkManager
 {
     [SerializeField]
@@ -31,6 +32,11 @@ public class CustomNetworkManager : NetworkManager
         GameObject player = Instantiate(playerPrefab);
         player.transform.position = new Vector3(player.transform.position.x + conn.connectionId * 2, player.transform.position.y, player.transform.position.z);
         NetworkServer.AddPlayerForConnection(conn, player, id);
+
+
+        //GameObject npc = Instantiate(spawnPrefabs[0]);
+        //npc.transform.position = new Vector3(npc.transform.position.x + conn.connectionId * 2, npc.transform.position.y + 1, npc.transform.position.z);
+        //NetworkServer.Spawn(npc);
     
     }
     public string GenerateNetworkBroadcastData()

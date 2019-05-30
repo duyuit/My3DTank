@@ -39,7 +39,7 @@ public class ShellExplosion : MonoBehaviour
 
         Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
         //GameObject.Find("Main Camera").GetComponent<ShockWave>().GenerateShockWave(transform.localPosition);
-        Destroy(gameObject);
+        Destroy(gameObject,0.1f);
     }
 
 

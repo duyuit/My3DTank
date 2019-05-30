@@ -3,9 +3,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.EventSystems;
 
-public class TankManagerment : MonoBehaviour
+public class TankManagerment : NetworkBehaviour
 {
     public BulletInfomation bulletInfomation;
     [HideInInspector]
@@ -18,7 +19,7 @@ public class TankManagerment : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentBullet = bulletInfomation.listBullet[1];
+        currentBullet = bulletInfomation.listBullet[0];
         UpdateAudioClip();
 
         //currentBullet = bulletInfomation.listBullet[0];
@@ -38,7 +39,12 @@ public class TankManagerment : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
- #if UNITY_ANDROID
+        if(!isLocalPlayer)
+        {
+            canFire = false;
+            return;
+        }
+#if UNITY_ANDROID
         if (Input.touchCount < 1)
             canFire = false;
         foreach (var touch in Input.touches)
@@ -66,6 +72,7 @@ public class TankManagerment : MonoBehaviour
             firePosition = Input.mousePosition;
             GameGlobal.Instance.lastFirePosition = Input.mousePosition;
         }
+        else canFire = false;
 #endif
 
     }

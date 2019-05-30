@@ -11,9 +11,10 @@ public class TurretRotateControl : NetworkBehaviour
     [SyncVar] Quaternion syncRotation;
     public Transform m_turret;
     public float lerpRate = 15;
+    public GameObject bulletPrefab;
     void Start()
     {
-        //GetComponent<NetworkIdentity>().AssignClientAuthority(parentPlayer.GetComponent<NetworkIdentity>().connectionToClient);
+      
     }
     void FixedUpdate()
     {
@@ -22,9 +23,10 @@ public class TurretRotateControl : NetworkBehaviour
     }
     void Update()
     {
-        if(isLocalPlayer)
+        if (isLocalPlayer)
             CheckAndRotate();
     }
+   
     void LerpRotation()
     {
         if(!isLocalPlayer)

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class TankShellShootControl : MonoBehaviour
+public class TankShellShootControl : NetworkBehaviour
 {
     Transform m_FireTransform;
     public GameObject fireEffect;
@@ -43,13 +44,23 @@ public class TankShellShootControl : MonoBehaviour
             directionBullet = (hit.point - m_FireTransform.position).normalized;
         }
     }
-    void GenerateShell()
+    [Command]
+    void CmdGenerateShell(Vector3 direction)
     {
-        Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
-        Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
-        shell.velocity = velo;
-
+        GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation);
+        Vector3 velo = tankManagerment.currentBullet.velocity * direction;
+        shell.GetComponent<Rigidbody>().velocity = velo;
+        NetworkServer.Spawn(shell);
     }
+    //[ClientRpc]
+    //void RpcAddForceOnAll()
+    //{
+    //    GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation);
+    //    Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
+    //    shell.GetComponent<Rigidbody>().velocity = velo;
+    //    ClientScene.RegisterPrefab(shell);
+    //    //  NetworkServer.Spawn(shell);
+    //}
     void FixedUpdate()
     {
         if (tankManagerment.canFire)
@@ -85,6 +96,6 @@ public class TankShellShootControl : MonoBehaviour
             effect.Play();
         }
         CheckRayCastToMouse();
-        GenerateShell();
+        CmdGenerateShell(directionBullet);
     }
 }

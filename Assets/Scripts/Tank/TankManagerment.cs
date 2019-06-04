@@ -123,9 +123,15 @@ public class TankManagerment : NetworkBehaviour
                
         }
     }
-    public void BulletSelect(int typeID)
+    [Command]
+    public void CmdBulletSelect(int typeID)
     {
+        RpcBulletSelect(typeID);
+    }
 
+    [ClientRpc]
+    public void RpcBulletSelect(int typeID)
+    {
         foreach (var bullet in bulletInfomation.listBullet)
         {
             if (bullet.type == (BulletType)typeID)
@@ -133,7 +139,7 @@ public class TankManagerment : NetworkBehaviour
                 currentBullet = bullet;
                 UpdateAudioClip();
                 ActiveComponent(currentBullet.type);
-                Debug.Log("he");
+                Debug.LogError("he");
                 return;
             }
         }
@@ -201,10 +207,10 @@ public class TankManagerment : NetworkBehaviour
         var camera = Camera.main;
         camera.GetComponent<MyCameraControl>().SetPlayer(gameObject.transform);
         var managerComponent = camera.GetComponent<MyGameManager>();
-        managerComponent.tankShellButton.onClick.AddListener(() => BulletSelect(0));
-        managerComponent.machineGunButton.onClick.AddListener(() => BulletSelect(1));
-        managerComponent.electricShellButton.onClick.AddListener(() => BulletSelect(2));
-        managerComponent.flameGunButton.onClick.AddListener(() => BulletSelect(3));
+        managerComponent.tankShellButton.onClick.AddListener(() => CmdBulletSelect(0));
+        managerComponent.machineGunButton.onClick.AddListener(() => CmdBulletSelect(1));
+        managerComponent.electricShellButton.onClick.AddListener(() => CmdBulletSelect(2));
+        managerComponent.flameGunButton.onClick.AddListener(() => CmdBulletSelect(3));
 
     }
 }

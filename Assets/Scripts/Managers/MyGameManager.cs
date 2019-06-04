@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MyGameManager : MonoBehaviour
 {
+    public Button machineGunButton;
+    public Button tankShellButton;
+    public Button electricShellButton;
+    public Button flameGunButton;
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
     public void Restart()
     {
@@ -23,4 +28,5 @@ public class MyGameManager : MonoBehaviour
     {
         
     }
+  
 }

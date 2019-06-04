@@ -153,4 +153,8 @@ public class TankMovement : NetworkBehaviour
     {
         Turn();
     }
+    public override void OnStartLocalPlayer()
+    {
+        joystick =(FixedJoystick) GameObject.FindObjectOfType<FixedJoystick>();
+    }
 }

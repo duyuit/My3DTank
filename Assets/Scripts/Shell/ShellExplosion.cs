@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 
-public class ShellExplosion : NetworkBehaviour
+public class ShellExplosion : MonoBehaviour
 {
     public LayerMask m_TankMask;
     public ParticleSystem m_ExplosionParticles;       
     public AudioSource m_ExplosionAudio;              
-    public float m_MaxDamage = 50f;                  
+    public float m_MaxDamage = 25f;                  
     public float m_ExplosionForce = 1000f;            
     public float m_MaxLifeTime = 2f;                  
-    public float m_ExplosionRadius = 5f;              
+    public float m_ExplosionRadius = 5f;
+    bool isExplosed = false;
 
 
     private void Start()
@@ -17,7 +17,6 @@ public class ShellExplosion : NetworkBehaviour
         Destroy(gameObject, m_MaxLifeTime);
     }
 
-    bool isExplosed = false;
     private void OnTriggerEnter(Collider other)
     {
         if (isExplosed)

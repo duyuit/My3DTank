@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 
-public class MachinaGunShootControl : MonoBehaviour
+
+public class MachinaGunShootControl : NetworkBehaviour
 {
     public float recoil;
     public GameObject fireEffect;
@@ -52,13 +54,19 @@ public class MachinaGunShootControl : MonoBehaviour
         }
     }
    
-    void GenerateShell()
+   
+    [Command]
+    void CmdGenerateShell(Vector3 direction, Vector3 position, Quaternion rotate)
     {
-        Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
-        CheckRecoil(ref directionBullet);
-        Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
-        shell.velocity = velo;
-     
+        GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, position, rotate);
+
+        float recoilMagnitude = 1.0f;
+        direction.x = direction.x + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+        direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
+
+        Vector3 velo = tankManagerment.currentBullet.velocity * direction;
+        shell.GetComponent<Rigidbody>().velocity = velo;
+        NetworkServer.Spawn(shell);
     }
 
     void FixedUpdate()
@@ -114,6 +122,6 @@ public class MachinaGunShootControl : MonoBehaviour
     {
         fireEffect.SetActive(true);
         CheckRayCastToMouse();
-        GenerateShell();
+        CmdGenerateShell(directionBullet, m_FireTransform.position, m_FireTransform.rotation);
     }
 }

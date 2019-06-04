@@ -20,7 +20,7 @@ public class TankManagerment : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentBullet = bulletInfomation.listBullet[0];
+        currentBullet = bulletInfomation.listBullet[1];
         UpdateAudioClip();
 
         //currentBullet = bulletInfomation.listBullet[0];
@@ -133,6 +133,7 @@ public class TankManagerment : NetworkBehaviour
                 currentBullet = bullet;
                 UpdateAudioClip();
                 ActiveComponent(currentBullet.type);
+                Debug.Log("he");
                 return;
             }
         }
@@ -197,7 +198,13 @@ public class TankManagerment : NetworkBehaviour
     }
     public override void OnStartLocalPlayer()
     {
-        Camera.main.GetComponent<MyCameraControl>().SetPlayer(gameObject.transform);
+        var camera = Camera.main;
+        camera.GetComponent<MyCameraControl>().SetPlayer(gameObject.transform);
+        var managerComponent = camera.GetComponent<MyGameManager>();
+        managerComponent.tankShellButton.onClick.AddListener(() => BulletSelect(0));
+        managerComponent.machineGunButton.onClick.AddListener(() => BulletSelect(1));
+        managerComponent.electricShellButton.onClick.AddListener(() => BulletSelect(2));
+        managerComponent.flameGunButton.onClick.AddListener(() => BulletSelect(3));
 
     }
 }

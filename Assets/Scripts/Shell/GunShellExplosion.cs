@@ -7,7 +7,7 @@ public class GunShellExplosion : MonoBehaviour
     public ParticleSystem m_ExplosionParticles;
     public AudioSource m_ExplosionAudio;
     public float m_MaxLifeTime = 2f;
-
+    bool isExplosed = false;
 
     private void Start()
     {
@@ -17,6 +17,9 @@ public class GunShellExplosion : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (isExplosed)
+            return;
+
         if (other.gameObject.tag.Equals("Tank"))
         {
             Rigidbody targetRigidbody = other.GetComponent<Rigidbody>();
@@ -30,16 +33,13 @@ public class GunShellExplosion : MonoBehaviour
                 }
             }
         }
-       
-
-
         m_ExplosionParticles.transform.parent = null;
         m_ExplosionAudio.Play();
         m_ExplosionParticles.Play();
-        
 
         Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
-        Destroy(gameObject);
+        isExplosed = true;
+        Destroy(gameObject, 0.1f);
     }
     
 }

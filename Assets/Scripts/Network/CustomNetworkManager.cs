@@ -35,7 +35,6 @@ public class CustomNetworkManager : NetworkManager
     {
         GameObject player = Instantiate(playerPrefab);
         player.transform.position =new Vector3(Random.Range(1,40), player.transform.position.y, Random.Range(1, 40));
-        player.GetComponent<TankManagerment>().playerID = id;
         NetworkServer.AddPlayerForConnection(conn, player, id);
         
         //GameObject npc = Instantiate(spawnPrefabs[0]);

@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class TankManagerment : NetworkBehaviour
 {
-    public int playerID;
     public BulletInfomation bulletInfomation;
     [HideInInspector]
     public BulletInfo currentBullet;

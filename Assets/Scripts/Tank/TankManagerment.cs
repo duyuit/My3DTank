@@ -6,9 +6,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class TankManagerment : NetworkBehaviour
 {
+    public int playerID;
     public BulletInfomation bulletInfomation;
     [HideInInspector]
     public BulletInfo currentBullet;
@@ -22,7 +24,6 @@ public class TankManagerment : NetworkBehaviour
     {
         currentBullet = bulletInfomation.listBullet[1];
         UpdateAudioClip();
-
         //currentBullet = bulletInfomation.listBullet[0];
     }
 
@@ -40,7 +41,7 @@ public class TankManagerment : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isLocalPlayer)
+        if (!isLocalPlayer)
         {
             canFire = false;
             return;
@@ -79,8 +80,8 @@ public class TankManagerment : NetworkBehaviour
     }
     public void Reset()
     {
-        if(isServer)
-        RpcReset();
+        if (isServer)
+            RpcReset();
         else
         {
             CmdReset();
@@ -119,8 +120,8 @@ public class TankManagerment : NetworkBehaviour
                 fireAudioSource.pitch = 1f;
                 fireAudioSource.loop = false;
                 break;
-            
-               
+
+
         }
     }
     [Command]
@@ -195,7 +196,7 @@ public class TankManagerment : NetworkBehaviour
                 break;
             case BulletType.MachineGunBullet:
                 GetComponent<MachinaGunShootControl>().enabled = true;
-           
+
                 break;
             case BulletType.TankShell:
                 GetComponent<TankShellShootControl>().enabled = true;
@@ -211,7 +212,39 @@ public class TankManagerment : NetworkBehaviour
         managerComponent.machineGunButton.onClick.AddListener(() => CmdBulletSelect(1));
         managerComponent.electricShellButton.onClick.AddListener(() => CmdBulletSelect(2));
         managerComponent.flameGunButton.onClick.AddListener(() => CmdBulletSelect(3));
+        var listAnotherTank = GameObject.FindGameObjectsWithTag("Tank");
+        var nameText = GetComponentInChildren<Text>();
+        nameText.color = new Color(0.54f, 1f, 0.517f);
 
+        var name = managerComponent.nameText.text;
+        if (name == "")
+        {
+            name = "Player " + netId;
+        }
+        CmdSetMyName(name);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        OnSyncMyNameHook(MyName);
+    }
+    [SyncVar(hook = "OnSyncMyNameHook")]
+    public string MyName="";
+
+    void OnSyncMyNameHook(string value)
+    {
+        // make sure we save the value. On remove clients if we have a hook the value isn't set for us!
+        MyName = value;
+        GetComponentInChildren<Text>().text = value;
+    }
+
+    [Command]
+    void CmdSetMyName(string name)
+    {
+        MyName = name;
     }
 }
+
+   
 

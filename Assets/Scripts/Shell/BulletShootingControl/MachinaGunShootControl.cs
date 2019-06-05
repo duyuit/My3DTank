@@ -65,8 +65,13 @@ public class MachinaGunShootControl : NetworkBehaviour
         direction.z = direction.z + Random.Range(-recoilMagnitude, recoilMagnitude) * 0.1f;
 
         Vector3 velo = tankManagerment.currentBullet.velocity * direction;
-        shell.GetComponent<Rigidbody>().velocity = velo;
         NetworkServer.Spawn(shell);
+        RpcFire(shell, velo);
+    }
+    [ClientRpc]
+    void RpcFire(GameObject shell, Vector3 velo)
+    {
+        shell.GetComponent<Rigidbody>().velocity = velo;
     }
 
     void FixedUpdate()

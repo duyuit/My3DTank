@@ -108,38 +108,39 @@ public class TankMovement : NetworkBehaviour
     private void Move()
     {
         // Adjust the position of the tank based on the player's input.
-        Vector3 movement = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime;
-        m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
-#if UNITY_ANDROID
-        if(joystick != null)
+        Vector3 movement = Vector3.zero;// = transform.forward * m_MovementInputValue * m_Speed * Time.deltaTime;
+                                        //m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
+                                        //#if UNITY_ANDROID
+        float hori = Input.GetAxis("Horizontal1");
+        float verti = Input.GetAxis("Vertical1");
+        if (joystick != null)
         {
-            float horiJoyStick = joystick.Horizontal;
-            float vertiJoyStick = joystick.Vertical;
-
-            movement.Set(horiJoyStick, 0, vertiJoyStick);
-            movement.Normalize();
-            bool hasHorizontalInput = !Mathf.Approximately(horiJoyStick, 0f);
-            bool hasVerticalInput = !Mathf.Approximately(vertiJoyStick, 0f);
-
-            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, m_TurnSpeed * Time.deltaTime, 0f);
-
-            Quaternion m_Rotation = Quaternion.identity;
-            m_Rotation = Quaternion.LookRotation(desiredForward);
-
-            m_Rigidbody.MovePosition(m_Rigidbody.position + movement*Time.deltaTime*m_Speed);
-            m_Rigidbody.MoveRotation(m_Rotation);
+            hori = joystick.Horizontal + Input.GetAxis("Horizontal1");
+            verti = joystick.Vertical + Input.GetAxis("Vertical1");
         }
+        movement.Set(hori, 0, verti);
+        movement.Normalize();
+        //bool hasHorizontalInput = !Mathf.Approximately(hori, 0f);
+        //bool hasVerticalInput = !Mathf.Approximately(verti, 0f);
+
+        Vector3 desiredForward = Vector3.RotateTowards(transform.forward, movement, m_TurnSpeed * Time.deltaTime, 0f);
+
+        Quaternion m_Rotation = Quaternion.identity;
+        m_Rotation = Quaternion.LookRotation(desiredForward);
+
+        m_Rigidbody.MovePosition(m_Rigidbody.position + movement*Time.deltaTime*m_Speed);
+        m_Rigidbody.MoveRotation(m_Rotation);
       
-#endif
+//#endif
     }
 
 
     private void Turn()
     {
         // Adjust the rotation of the tank based on the player's input.
-        float turn = m_TurnInputValue * m_TurnSpeed * Time.deltaTime;
-        Quaternion quaternion = Quaternion.Euler(0, turn, 0);
-        m_Rigidbody.MoveRotation(m_Rigidbody.rotation * quaternion);
+        //float turn = m_TurnInputValue * m_TurnSpeed * Time.deltaTime;
+        //Quaternion quaternion = Quaternion.Euler(0, turn, 0);
+        //m_Rigidbody.MoveRotation(m_Rigidbody.rotation * quaternion);
     }
 
     [Command]

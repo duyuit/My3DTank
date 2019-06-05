@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ElectricShellShootControl : MonoBehaviour
+public class ElectricShellShootControl : NetworkBehaviour
 {
     Transform m_FireTransform;
 
@@ -27,12 +28,19 @@ public class ElectricShellShootControl : MonoBehaviour
             mouseHitPosition = hit.point;
         }
     }
-    void GenerateShell()
+    [Command]
+    void CmdGenerateShell(Vector3 position, Quaternion rotate,Vector3 mouseHit)
     {
-        Rigidbody shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation).GetComponent<Rigidbody>();
-        shell.GetComponent<FireToATarget>().Fire(mouseHitPosition);
-
+        GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, position, rotate);
+        NetworkServer.Spawn(shell);
+        RpcFire(shell, mouseHit);
     }
+    [ClientRpc]
+    void RpcFire(GameObject shell,Vector3 mouseHit)
+    {
+        shell.GetComponent<FireToATarget>().Fire(mouseHit);
+    }
+
     void FixedUpdate()
     {
         if (tankManagerment.canFire)
@@ -56,6 +64,6 @@ public class ElectricShellShootControl : MonoBehaviour
     private void Fire()
     {
         CheckRayCastToMouse();
-        GenerateShell();
+        CmdGenerateShell(m_FireTransform.position, m_FireTransform.rotation,mouseHitPosition);
     }
 }

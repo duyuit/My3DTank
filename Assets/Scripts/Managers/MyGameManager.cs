@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class MyGameManager : MonoBehaviour
 {
+    public Text nameText;
     public Button machineGunButton;
     public Button tankShellButton;
     public Button electricShellButton;

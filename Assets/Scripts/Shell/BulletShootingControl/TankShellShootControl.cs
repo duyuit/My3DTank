@@ -49,18 +49,14 @@ public class TankShellShootControl : NetworkBehaviour
     {
         GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, position, rotate);
         Vector3 velo = tankManagerment.currentBullet.velocity * direction;
-        shell.GetComponent<Rigidbody>().velocity = velo;
         NetworkServer.Spawn(shell);
+        RpcFire(shell, velo);
     }
-    //[ClientRpc]
-    //void RpcAddForceOnAll()
-    //{
-    //    GameObject shell = Instantiate(tankManagerment.currentBullet.prefab, m_FireTransform.position, m_FireTransform.rotation);
-    //    Vector3 velo = tankManagerment.currentBullet.velocity * directionBullet;
-    //    shell.GetComponent<Rigidbody>().velocity = velo;
-    //    ClientScene.RegisterPrefab(shell);
-    //    //  NetworkServer.Spawn(shell);
-    //}
+    [ClientRpc]
+    void RpcFire(GameObject shell, Vector3 velo)
+    {
+        shell.GetComponent<Rigidbody>().velocity = velo;
+    }
     void FixedUpdate()
     {
         if (tankManagerment.canFire)

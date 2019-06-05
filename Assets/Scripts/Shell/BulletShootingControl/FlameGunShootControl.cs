@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class FlameGunShootControl : MonoBehaviour
+public class FlameGunShootControl : NetworkBehaviour
 {
     public GameObject flameGunParticle;
     public Animator animator;
@@ -32,20 +33,20 @@ public class FlameGunShootControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (tankManagerment.canFire)
-        {
-            animator.SetBool("FTOn", true);
-            damageBox.SetActive(true);
-            tankManagerment.HandleMusic(true);
-        } else
-        {
-            animator.SetBool("FTOn", false);
-            damageBox.SetActive(false);
-            tankManagerment.HandleMusic(false);
-        }
-
+        CmdFire(tankManagerment.canFire);
     }
-
+    [Command]
+    void CmdFire(bool isFire)
+    {
+        RpcFire(isFire);
+    }
+    [ClientRpc]
+    void RpcFire(bool isFire)
+    {
+        animator.SetBool("FTOn", isFire);
+        damageBox.SetActive(isFire);
+        tankManagerment.HandleMusic(isFire);
+    }
     // Update is called once per frame
 
 }

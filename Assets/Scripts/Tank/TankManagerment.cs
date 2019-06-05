@@ -40,6 +40,47 @@ public class TankManagerment : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        UpdateTouch();
+        UpdateSelectWeaponByKey();
+    }
+    float lastTimeChangeWeapon = 0;
+    KeyCode lastWeaponChange;
+    void UpdateSelectWeaponByKey()
+    {
+        var managerComponent = Camera.main.GetComponent<MyGameManager>();
+        if (Time.time - lastTimeChangeWeapon > 1.0f)
+        {
+            if (Input.GetKey(KeyCode.Alpha1) && lastWeaponChange != KeyCode.Alpha1)
+            {
+                managerComponent.machineGunButton.onClick.Invoke();
+                lastTimeChangeWeapon = Time.time;
+                lastWeaponChange = KeyCode.Alpha1;
+            }
+            else if (Input.GetKey(KeyCode.Alpha2) && lastWeaponChange != KeyCode.Alpha2)
+            {
+                managerComponent.tankShellButton.onClick.Invoke();
+                lastTimeChangeWeapon = Time.time;
+                lastWeaponChange = KeyCode.Alpha2;
+
+            }
+            else if (Input.GetKey(KeyCode.Alpha3) && lastWeaponChange != KeyCode.Alpha3)
+            {
+                managerComponent.electricShellButton.onClick.Invoke();
+                lastTimeChangeWeapon = Time.time;
+                lastWeaponChange = KeyCode.Alpha3;
+
+            }
+            else if (Input.GetKey(KeyCode.Alpha4) && lastWeaponChange != KeyCode.Alpha4)
+            {
+                managerComponent.flameGunButton.onClick.Invoke();
+                lastTimeChangeWeapon = Time.time;
+                lastWeaponChange = KeyCode.Alpha4;
+
+            }
+        }
+    }
+    void UpdateTouch()
+    {
         if (!isLocalPlayer)
         {
             canFire = false;
@@ -75,7 +116,6 @@ public class TankManagerment : NetworkBehaviour
         }
         else canFire = false;
 #endif
-
     }
     public void Reset()
     {
